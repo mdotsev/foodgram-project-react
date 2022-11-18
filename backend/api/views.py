@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from django.contrib.auth import get_user_model
 from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404
-from djoser.views import UserViewSet
+from djoser.views import UserViewSet as BaseUserViewSet
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.pagination import LimitOffsetPagination
@@ -15,7 +15,7 @@ from recipes.models import (Favorite, Follow, Ingredient,
                             ShoppingCart, Tag,)
 from .filters import RecipeFilter, IngredientFilter
 from .permissions import IsAdminOrReadOnly, IsAuthorOrReadOnly
-from .serializers import (CustomUserSerializer, FollowSerializer,
+from .serializers import (UserSerializer, FollowSerializer,
                           IngredientSerializer, RecipeInfoSerializer,
                           ReadOnlyRecipeSerializer, RecipeSerializer,
                           TagSerializer,)
@@ -41,61 +41,15 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
     filterset_class = RecipeFilter
 
 
-class CustomUserViewSet(UserViewSet):
+class UserViewSet(BaseUserViewSet):
     queryset = User.objects.all()
 
-    serializer_class = CustomUserSerializer
+    serializer_class = UserSerializer
     pagination_class = LimitOffsetPagination
 
     @action(
-        detail=True,
-        methods=['post', 'delete'],
-        permission_classes=[IsAuthenticated]
-    )
-    def subscribe(self, request, id=None):
-        user = request.user
-        author = get_object_or_404(User, id=id)
-
-        if user == author:
-            delete_err = ''
-            if request.method == 'DELETE':
-                delete_err = ', поэтому отписаться тоже невозможно'
-
-            return Response({
-                'errors': f'Нельзя подписаться на самого себя{delete_err}'
-            }, status=status.HTTP_400_BAD_REQUEST)
-
-        follow = Follow.objects.filter(user=user, author=author)
-
-        if request.method == 'POST':
-
-            if follow.exists():
-                return Response(
-                    {'errors': 'Вы уже подписаны на этого пользователя'},
-                    status=status.HTTP_400_BAD_REQUEST
-                )
-
-            follow = Follow.objects.create(user=user, author=author)
-            serializer = FollowSerializer(
-                follow,
-                context={'request': request}
-            )
-
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-        if request.method == 'DELETE':
-
-            if follow.exists():
-                follow.delete()
-                return Response(status=status.HTTP_204_NO_CONTENT)
-
-            return Response(
-                {'errors': 'Вы не были подписаны на этого пользователя'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-
-    @action(
         detail=False,
+        methods=['get'],
         permission_classes=[IsAuthenticated]
     )
     def subscriptions(self, request):
@@ -107,7 +61,69 @@ class CustomUserViewSet(UserViewSet):
             many=True,
             context={'request': request}
         )
+
         return self.get_paginated_response(serializer.data)
+
+
+class SubscribeViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+
+    serializer_class = FollowSerializer
+    permission_classes = (IsAuthenticated,)
+    pagination_class = LimitOffsetPagination
+
+    def get_data(self):
+        author_id = self.kwargs.get('author_id')
+        author = get_object_or_404(User, pk=author_id)
+        user = self.request.user
+        follow = Follow.objects.filter(user=user, author=author)
+
+        return (author, user, follow)
+
+    def create(self, request, *args, **kwargs):
+
+        author, user, follow = self.get_data()
+
+        if user == author:
+            return Response(
+                {'errors': 'Нельзя подписаться на самого себя'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        follow, created = Follow.objects.get_or_create(
+                user=user,
+                author=author,
+            )
+        if created:
+            serializer = FollowSerializer(
+                follow,
+                context={'request': request}
+            )
+
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        return Response(
+                {'errors': 'Вы уже подписаны на этого пользователя'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+    def destroy(self, request, *args, **kwargs):
+        author, user, follow = self.get_data()
+
+        if user == author:
+            return Response(
+                {'errors': 'Нельзя отписаться от себя'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        if follow.exists():
+            follow.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+
+        return Response(
+                {'errors': 'Вы уже отписаны от этого пользователя'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
 
 class RecipeViewSet(viewsets.ModelViewSet):

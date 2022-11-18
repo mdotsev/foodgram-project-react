@@ -1,14 +1,17 @@
 from django.contrib.auth import get_user_model
 from django.db.models import F
 from django.shortcuts import get_object_or_404
-from djoser.serializers import UserCreateSerializer, UserSerializer
+from djoser.serializers import (
+    UserCreateSerializer as BaseCreateUserSerializer,
+    UserSerializer as BaseUserSerializer
+)
 from drf_extra_fields.fields import Base64ImageField
+
 from rest_framework import serializers
 from rest_framework.fields import IntegerField, SerializerMethodField
 from rest_framework.relations import PrimaryKeyRelatedField
 
-from recipes.models import (Follow, Ingredient, Recipe,
-                            RecipeIngredients, Tag,)
+from recipes.models import Follow, Ingredient, Recipe, RecipeIngredients, Tag
 
 User = get_user_model()
 
@@ -36,7 +39,7 @@ class IngredientSerializer(serializers.ModelSerializer):
         )
 
 
-class CreateUserSerializer(UserCreateSerializer):
+class CreateUserSerializer(BaseCreateUserSerializer):
     class Meta:
         model = User
         fields = (
@@ -46,7 +49,7 @@ class CreateUserSerializer(UserCreateSerializer):
         ) + tuple(User.REQUIRED_FIELDS)
 
 
-class CustomUserSerializer(UserSerializer):
+class UserSerializer(BaseUserSerializer):
     is_subscribed = SerializerMethodField(read_only=True)
 
     class Meta:
@@ -100,7 +103,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         queryset=Tag.objects.all(),
         many=True,
     )
-    author = CustomUserSerializer(read_only=True)
+    author = UserSerializer(read_only=True)
     ingredients = RecipeIngredientsSerializer(
         many=True,
     )
@@ -171,12 +174,13 @@ class RecipeSerializer(serializers.ModelSerializer):
         return value
 
     def create_ingredients(self, ingredients, recipe):
-        for ingredient in ingredients:
-            RecipeIngredients.objects.create(
+        RecipeIngredients.objects.bulk_create(
+            [RecipeIngredients(
                 recipe=recipe,
                 ingredient_id=ingredient.get('id'),
                 amount=ingredient.get('amount'),
-            )
+            ) for ingredient in ingredients]
+        )
 
     def create(self, validated_data):
         image = validated_data.pop('image')
@@ -207,7 +211,7 @@ class RecipeSerializer(serializers.ModelSerializer):
 class ReadOnlyRecipeSerializer(serializers.ModelSerializer):
 
     tags = TagSerializer(many=True, read_only=True)
-    author = CustomUserSerializer(read_only=True)
+    author = UserSerializer(read_only=True)
     image = Base64ImageField()
 
     ingredients = SerializerMethodField()

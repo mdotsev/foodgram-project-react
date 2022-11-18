@@ -15,10 +15,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework',
-    'rest_framework.authtoken',
+
     'django_filters',
     'djoser',
+    'rest_framework',
+    'rest_framework.authtoken',
+
     'recipes',
     'api'
 ]
@@ -114,8 +116,8 @@ DJOSER = {
     },
     'SERIALIZERS': {
         'user_create': 'api.serializers.CreateUserSerializer',
-        'user': 'api.serializers.CustomUserSerializer',
-        'current_user': 'api.serializers.CustomUserSerializer',
+        'user': 'api.serializers.UserSerializer',
+        'current_user': 'api.serializers.UserSerializer',
     },
 }
 
