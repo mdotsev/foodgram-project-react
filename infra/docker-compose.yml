@@ -20,7 +20,7 @@ services:
       - ./.env
 
   frontend:
-    image: mdotsev/foodgram_frontend:latest
+    image: mdotsev/foodgram_frontend:v1.0
     restart: always
     volumes:
       - ../frontend/:/app/result_build/
