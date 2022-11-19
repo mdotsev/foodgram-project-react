@@ -12,7 +12,7 @@ COLORS = (
     (ORANGE, 'Оранжевый'),
     (GREEN, 'Зеленый'),
     (PURPLE, 'Пурпурный'),
-    )
+)
 
 
 class User(AbstractUser):
@@ -101,8 +101,9 @@ class Recipe(models.Model):
         validators=[
             MinValueValidator(
                 1,
-                message='Время приготовления не может быть меньше минуты')
-            ]
+                message='Время приготовления не может быть меньше минуты'
+            )
+        ]
     )
 
     class Meta:

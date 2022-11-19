@@ -1,25 +1,27 @@
 from datetime import datetime
-from django.http import HttpResponse
+
 from django.contrib.auth import get_user_model
-from django_filters.rest_framework import DjangoFilterBackend
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
+
+from django_filters.rest_framework import DjangoFilterBackend
+
 from djoser.views import UserViewSet as BaseUserViewSet
+
+from recipes.models import (Favorite, Follow, Ingredient, Recipe,
+                            RecipeIngredients, ShoppingCart, Tag)
+
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.pagination import LimitOffsetPagination
-from rest_framework.permissions import SAFE_METHODS, IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, SAFE_METHODS
 from rest_framework.response import Response
 
-from recipes.models import (Favorite, Follow, Ingredient,
-                            Recipe, RecipeIngredients,
-                            ShoppingCart, Tag,)
-from .filters import RecipeFilter, IngredientFilter
+from .filters import IngredientFilter, RecipeFilter
 from .permissions import IsAdminOrReadOnly, IsAuthorOrReadOnly
-from .serializers import (UserSerializer, FollowSerializer,
-                          IngredientSerializer, RecipeInfoSerializer,
-                          ReadOnlyRecipeSerializer, RecipeSerializer,
-                          TagSerializer,)
-
+from .serializers import (FollowSerializer, IngredientSerializer,
+                          ReadOnlyRecipeSerializer, RecipeInfoSerializer,
+                          RecipeSerializer, TagSerializer, UserSerializer)
 
 User = get_user_model()
 
