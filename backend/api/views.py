@@ -91,9 +91,9 @@ class SubscribeViewSet(viewsets.ModelViewSet):
             )
 
         follow, created = Follow.objects.get_or_create(
-                user=user,
-                author=author,
-            )
+            user=user,
+            author=author,
+        )
         if created:
             serializer = FollowSerializer(
                 follow,
@@ -103,9 +103,9 @@ class SubscribeViewSet(viewsets.ModelViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(
-                {'errors': 'Вы уже подписаны на этого пользователя'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+            {'errors': 'Вы уже подписаны на этого пользователя'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
 
     def destroy(self, request, *args, **kwargs):
         author, user, follow = self.get_data()
@@ -121,9 +121,9 @@ class SubscribeViewSet(viewsets.ModelViewSet):
             return Response(status=status.HTTP_204_NO_CONTENT)
 
         return Response(
-                {'errors': 'Вы уже отписаны от этого пользователя'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+            {'errors': 'Вы уже отписаны от этого пользователя'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
