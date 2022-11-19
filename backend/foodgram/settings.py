@@ -1,10 +1,14 @@
 import os
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-SECRET_KEY = '1ze-3da8oxkn4wfyed-gpx*387m#ddkv_(1lz&n^)^bu!)z6!m'
+SECRET_KEY = os.getenv('SECRET_KEY', default='1ze-3da8oxkn4wfyed-gpx*387m#ddkv_(1lz&n^)^bu!)z6!m')
 
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -37,10 +41,11 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'foodgram.urls'
 
+TEMPLATES_DIR = os.path.join(BASE_DIR, 'templates')
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [TEMPLATES_DIR],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -55,12 +60,22 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'foodgram.wsgi.application'
 
+if DEBUG:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        }
+    }
+
 DATABASES = {
-
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': os.getenv('DB_ENGINE', default='django.db.backends.postgresql'),
+        'NAME': os.getenv('DB_NAME', default='postgres'),
+        'USER': os.getenv('POSTGRES_USER', default='postgres'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD', default='postgres'),
+        'HOST': os.getenv('DB_HOST', default='db'),
+        'PORT': os.getenv('DB_PORT', default='5432')
     }
 }
 
@@ -101,7 +116,7 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 5,
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.AllowAny',
+	'rest_framework.permissions.IsAuthenticatedOrReadOnly',
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
@@ -111,8 +126,8 @@ REST_FRAMEWORK = {
 DJOSER = {
     'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm/{uid}/{token}',
     'PERMISSIONS': {
-        'user': ['djoser.permissions.CurrentUserOrAdminOrReadOnly'],
-        'user_list': ['rest_framework.permissions.IsAuthenticatedOrReadOnly'],
+        'user': ('rest_framework.permissions.IsAuthenticated',),
+        'user_list': ('rest_framework.permissions.AllowAny',)
     },
     'SERIALIZERS': {
         'user_create': 'api.serializers.CreateUserSerializer',
