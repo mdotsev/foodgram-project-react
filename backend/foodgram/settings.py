@@ -8,9 +8,11 @@ load_dotenv()
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-SECRET_KEY = os.getenv('SECRET_KEY') or get_random_secret_key()
+# SECRET_KEY = os.getenv('SECRET_KEY') or get_random_secret_key()
 
-DEBUG = False
+SECRET_KEY = '1ze-3da8oxkn4wfyed-gpx*387m#ddkv_(1lz&n^)^bu!)z6!m'
+
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -71,6 +73,14 @@ DATABASES = {
         'PORT': os.getenv('DB_PORT', default='5432')
     }
 }
+
+if DEBUG:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        }
+    }
 
 AUTH_PASSWORD_VALIDATORS = [
     {
