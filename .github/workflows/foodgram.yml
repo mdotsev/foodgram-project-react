@@ -6,7 +6,6 @@ jobs:
 
   tests:
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v3
     - name: Set up Python
@@ -58,7 +57,7 @@ jobs:
         username: ${{ secrets.USER }}
         key: ${{ secrets.SSH_KEY }}
         passphrase: ${{ secrets.PASSPHRASE }}
-	script: |
+	      script: |
             sudo docker-compose stop
             sudo docker-compose rm admin_backend_1 -f
             rm .env
@@ -69,11 +68,11 @@ jobs:
             echo POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} >> .env
             echo DB_HOST=${{ secrets.DB_HOST }} >> .env
             echo DB_PORT=${{ secrets.DB_PORT }} >> .env
-	    echo SECRET_KEY=${{ secrets.SECRET_KEY }} >> .env
-	    sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodgram_backend:latest
+	          echo SECRET_KEY=${{ secrets.SECRET_KEY }} >> .env
+	          sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodgram_backend:latest
             sudo docker-compose up -d
             sudo docker compose exec admin_backend_1 python manage.py migrate
-	    sudo docker compose exec backend python manage.py collectstatic --no-input	  
+	          sudo docker compose exec backend python manage.py collectstatic --no-input	  
 
   send_message:
     runs-on: ubuntu-latest
