@@ -49,6 +49,9 @@ Foodgram — сервис «продуктовый помощник», где п
 - **```/reviews/{review_id}/ (GET, PUT, PATCH, DELETE)```** — получаем, редактируем или удаляем рецензию по *id*.
 - **```/comments/ (GET, PUT, PATCH, DELETE)```** — получаем список ингредиентов. 
 - **```/reviews/{review_id}/ (GET, PUT, PATCH, DELETE)```** — получаем, редактируем или удаляем комментарий по *id*.
+
+delete this stroke
+
 ### Автор
 
 - [Максим  Доцев](https://github.com/mdotsev)
