@@ -12,7 +12,7 @@ SECRET_KEY = os.getenv('SECRET_KEY') or get_random_secret_key()
 
 # SECRET_KEY = '1ze-3da8oxkn4wfyed-gpx*387m#ddkv_(1lz&n^)^bu!)z6!m'
 
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
