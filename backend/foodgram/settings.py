@@ -12,7 +12,7 @@ SECRET_KEY = os.getenv('SECRET_KEY') or get_random_secret_key()
 
 # SECRET_KEY = '1ze-3da8oxkn4wfyed-gpx*387m#ddkv_(1lz&n^)^bu!)z6!m'
 
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -69,7 +69,7 @@ DATABASES = {
         'NAME': os.getenv('DB_NAME', default='postgres'),
         'USER': os.getenv('POSTGRES_USER', default='postgres'),
         'PASSWORD': os.getenv('POSTGRES_PASSWORD', default='postgres'),
-        'HOST': os.getenv('DB_HOST', default='0.0.0.0'),
+        'HOST': os.getenv('DB_HOST', default='db'),
         'PORT': os.getenv('DB_PORT', default='5432')
     }
 }
