@@ -1,16 +1,16 @@
 import os
 
-from dotenv import load_dotenv
-
 from django.core.management.utils import get_random_secret_key
+
+from dotenv import load_dotenv
 
 load_dotenv()
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-# SECRET_KEY = os.getenv('SECRET_KEY') or get_random_secret_key()
+SECRET_KEY = os.getenv('SECRET_KEY') or get_random_secret_key()
 
-SECRET_KEY = '1ze-3da8oxkn4wfyed-gpx*387m#ddkv_(1lz&n^)^bu!)z6!m'
+# SECRET_KEY = '1ze-3da8oxkn4wfyed-gpx*387m#ddkv_(1lz&n^)^bu!)z6!m'
 
 DEBUG = True
 
