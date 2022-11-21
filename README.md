@@ -1,6 +1,6 @@
 #  Продуктовый помощник Foodgram
 
-![example workflow](https://github.com/mdotsev/foodgram-project-react/actions/workflows/foodgram.yml/badge.svg)
+![example workflow](https://github.com/mdotsev/foodgram-project-react/actions/workflows/foodgram_workflow.yml/badge.svg)
 
 http://158.160.10.238/redoc/
 
@@ -49,8 +49,6 @@ Foodgram — сервис «продуктовый помощник», где п
 - **```/reviews/{review_id}/ (GET, PUT, PATCH, DELETE)```** — получаем, редактируем или удаляем рецензию по *id*.
 - **```/comments/ (GET, PUT, PATCH, DELETE)```** — получаем список ингредиентов. 
 - **```/reviews/{review_id}/ (GET, PUT, PATCH, DELETE)```** — получаем, редактируем или удаляем комментарий по *id*.
-
-delete this stroke
 
 ### Автор
 
