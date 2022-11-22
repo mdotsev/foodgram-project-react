@@ -1,5 +1,7 @@
 from datetime import datetime
 
+from api.pagination import LimitPageNumberPagination
+
 from django.contrib.auth import get_user_model
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
@@ -46,7 +48,7 @@ class UserViewSet(BaseUserViewSet):
     queryset = User.objects.all()
 
     serializer_class = UserSerializer
-    pagination_class = LimitOffsetPagination
+    pagination_class = LimitPageNumberPagination
 
     @action(
         detail=False,
@@ -108,7 +110,7 @@ class SubscribeViewSet(viewsets.ModelViewSet):
             status=status.HTTP_400_BAD_REQUEST
         )
 
-    def destroy(self, request, *args, **kwargs):
+    def delete(self, request, *args, **kwargs):
         author, user, follow = self.get_data()
 
         if user == author:
