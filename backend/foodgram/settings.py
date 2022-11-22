@@ -149,3 +149,5 @@ DJOSER = {
         'current_user': 'api.serializers.UserSerializer',
     },
 }
+
+DATA_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024
