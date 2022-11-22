@@ -74,7 +74,7 @@ class SubscribeViewSet(viewsets.ModelViewSet):
     pagination_class = LimitOffsetPagination
 
     def get_data(self):
-        author_id = self.kwargs.get('author_id')
+        author_id = self.kwargs.get('id')
         author = get_object_or_404(User, pk=author_id)
         user = self.request.user
         follow = Follow.objects.filter(user=user, author=author)
